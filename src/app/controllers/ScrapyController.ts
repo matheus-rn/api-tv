@@ -3,7 +3,7 @@ import puppeteer from 'puppeteer'
 class Scrapy {
   private url: string
 
-  public constructor (url:string) {
+  constructor (url:string) {
     this.url = url
   }
 
@@ -13,6 +13,7 @@ class Scrapy {
 
     const programs = await this.getCategories(page)
     console.log(programs)
+
     await browser.close()
   }
 
@@ -33,7 +34,9 @@ class Scrapy {
   }
 
   private async getLinksChannels (page:puppeteer.Page, url: string):Promise<string[]> {
+    console.log(url)
     await page.goto(url)
+    console.log('chegou')
 
     await page.$eval('body > div.whitebg > div > ul > li.divider.ad_group', element => {
       return element.remove()

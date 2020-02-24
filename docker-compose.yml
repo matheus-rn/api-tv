@@ -17,6 +17,15 @@ services:
     networks:
       - api-backend
   
+  redis:
+    container_name: redis
+    image: redis:alpine
+    command: redis-server --requirepass ${REDIS_PASS}
+    ports:
+      - "6379:6379"
+    networks:
+      - api-backend
+  
 networks:
   api-backend:
     external:

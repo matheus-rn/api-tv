@@ -1,8 +1,16 @@
-// import ScrapyTv from './app/jobs/ScrapyTv'
+import ScrapyTv from './app/jobs/ScrapyTv'
 // import Queue from './app/lib/Queue'
+// import { format, zonedTimeToUtc } from 'date-fns-tz'
+// import { addDays, parseISO } from 'date-fns'
 
-// const url = process.env.API_SCRAPY
-// const categories = process.env.CATEGORIES.split(',')
+const url = process.env.API_SCRAPY
+const categories = process.env.CATEGORIES.split(',')
+
+ScrapyTv.handle(`${url}/${categories[0]}`)
+
+// const parsedDate = parseISO('2018-04-01 16:00:00')
+// const znDate = zonedTimeToUtc(parsedDate, 'America/Sao_Paulo')
+// console.log(new Date('2018-04-01 16:00:00'))
 
 // categories.forEach(categorie => {
 //   const data = {

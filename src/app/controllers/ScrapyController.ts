@@ -1,4 +1,7 @@
 import puppeteer from 'puppeteer'
+import esClient from '../../config/elasticsearch'
+import { format, zonedTimeToUtc } from 'date-fns-tz'
+import { addDays } from 'date-fns'
 
 class Scrapy {
   private url: string
@@ -11,32 +14,21 @@ class Scrapy {
     const browser = await puppeteer.launch({ headless: false })
     const page = await browser.newPage()
 
-    const programs = await this.getCategories(page)
-    console.log(programs)
+    await this.getCategories(page)
 
     await browser.close()
   }
 
-  private async getCategories (page: puppeteer.Page): Promise<{}[]> {
+  private async getCategories (page: puppeteer.Page): Promise<void> {
     const linkChannel = await this.getLinksChannels(page, this.url)
 
-    let programs = []
-
-    for (let i = 0; i < linkChannel.length; i++) {
-      await this.getProgramsChannel(page, `https://meuguia.tv${linkChannel[i]}`).then(program => {
-        programs = [...programs, program]
-      }).catch(() => {
-        throw new Error('Erro ao raspar programas canais')
-      })
+    for (let i = 0; i < 1; i++) {
+      await this.getProgramsChannel(page, `https://meuguia.tv${linkChannel[i]}`)
     }
-
-    return programs
   }
 
   private async getLinksChannels (page:puppeteer.Page, url: string):Promise<string[]> {
-    console.log(url)
     await page.goto(url)
-    console.log('chegou')
 
     await page.$eval('body > div.whitebg > div > ul > li.divider.ad_group', element => {
       return element.remove()
@@ -54,52 +46,69 @@ class Scrapy {
     return linksChannels
   }
 
-  private async getProgramsChannel (page:puppeteer.Page, linkChannel: string):Promise<{}> {
+  private async getProgramsChannel (page:puppeteer.Page, linkChannel: string):Promise<void> {
     await page.goto(linkChannel)
 
     let indexStartEnd = await this.getIndexStartEnd(page)
     indexStartEnd = indexStartEnd.filter(e => e !== null)
 
-    const dataChannnels = await this.getPrograms(indexStartEnd, page)
-
-    return dataChannnels
+    await this.getPrograms(indexStartEnd, page)
   }
 
   private async getIndexStartEnd (page:puppeteer.Page):Promise<number[]> {
+    await page.waitForSelector('body > div.whitebg > div > ul > li.divider.ad_group')
+
     await page.$eval('body > div.whitebg > div > ul > li.divider.ad_group', element => {
       return element.remove()
     })
 
-    const indexStartEnd = await page.evaluate(sel => {
+    await page.$$eval('body > div.whitebg > div > ul > li.divider', elements => {
+      return elements.forEach(element => element.remove())
+    })
+
+    const dateTomorrow = this.getDateLimite(1).split('-')
+    const dateAfterTomorrow = this.getDateLimite(2).split('-')
+
+    const indexStartEnd = await page.evaluate((sel, dateTomorrow, dateAfterTomorrow) => {
       const elements = Array.from(document.querySelectorAll(sel))
-      const a = elements.map((element, index) => {
-        if ((element.textContent).indexOf(', 19/02') > 0 || (element.textContent).indexOf(', 20/02') > 0) {
+
+      const arrayIndexs = elements.map((element, index) => {
+        if ((element.textContent).indexOf(`, ${dateTomorrow[2]}/${dateTomorrow[1]}`) > 0 ||
+            (element.textContent).indexOf(`, ${dateAfterTomorrow[2]}/${dateAfterTomorrow[1]}`) > 0) {
           return index
         }
       })
-      return a
-    }, 'ul > li')
-
+      return arrayIndexs
+    }, 'ul > li', dateTomorrow, dateAfterTomorrow)
     return indexStartEnd
   }
 
-  private async getPrograms (indexStartEnd:number[], page:puppeteer.Page):Promise<{}[]> {
-    let dataChannnels = []
-    for (let i = indexStartEnd[0] + 2; i < indexStartEnd[1]; i++) {
+  private async getPrograms (indexStartEnd:number[], page:puppeteer.Page):Promise<void> {
+    const dateTomorrow = this.getDateLimite(1)
+
+    for (let i = indexStartEnd[0] + 2; i <= indexStartEnd[1]; i++) {
       const time = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.lileft.time`, e => e.innerHTML)
       const title = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.licontent > h2`, e => e.innerHTML)
       const category = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.licontent > h3`, e => e.innerHTML)
       const channel = await page.$eval('#canal_header > div > h1', e => e.innerHTML)
-      const program = {
-        time: time,
-        title: title,
-        category: category,
-        channel: channel
-      }
-      dataChannnels = [...dataChannnels, program]
-    }
 
-    return dataChannnels
+      await esClient.index({
+        index: 'channels',
+        type: 'doc',
+        body: {
+          channel: channel,
+          title: title,
+          category: category,
+          datetime: `${dateTomorrow}T${time}:00`
+        }
+      })
+    }
+  }
+
+  private getDateLimite (days: number):string {
+    const timeZone = zonedTimeToUtc(addDays(new Date(), days), 'America/Sao_Paulo')
+    const date = format(timeZone, 'yyyy-MM-dd')
+    return date
   }
 }
 

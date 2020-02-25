@@ -22,7 +22,7 @@ class Scrapy {
   private async getCategories (page: puppeteer.Page): Promise<void> {
     const linkChannel = await this.getLinksChannels(page, this.url)
 
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < linkChannel.length; i++) {
       await this.getProgramsChannel(page, `https://meuguia.tv${linkChannel[i]}`)
     }
   }

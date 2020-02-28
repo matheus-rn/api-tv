@@ -6,7 +6,7 @@ import { addDays } from 'date-fns'
 class Scrapy {
   private url: string
 
-  constructor (url:string) {
+  public setUrl (url:string):void {
     this.url = url
   }
 
@@ -112,4 +112,4 @@ class Scrapy {
   }
 }
 
-export default Scrapy
+export default new Scrapy()

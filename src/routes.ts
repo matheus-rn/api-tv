@@ -1,9 +1,7 @@
 import { Router } from 'express'
-
+import TvFullController from './app/controllers/TvFullController'
 const routes = Router()
 
-routes.get('/', (req, res) => {
-  return res.send('hello e')
-})
+routes.get('/', TvFullController.searchCurrentPrograms)
 
 export default routes

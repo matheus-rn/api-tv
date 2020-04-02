@@ -1,0 +1,28 @@
+sudo: required
+
+language: 
+  - node_js
+
+node_js:
+  - "12.14.0"
+
+services:
+  - docker
+
+stages:
+  - Build
+
+before_install:
+  - yarn
+
+jobs:
+  include:
+    - stage: "Build"
+      name: "Build"
+      script:
+        - yarn build
+        
+addons:
+  apt:
+    packages:
+      - docker-ce

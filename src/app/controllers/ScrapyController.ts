@@ -4,6 +4,10 @@ import { format, zonedTimeToUtc } from 'date-fns-tz'
 import { addDays } from 'date-fns'
 
 class Scrapy {
+  public constructor () {
+    this.url = ''
+  }
+
   private url: string
 
   public setUrl (url:string):void {
@@ -14,7 +18,9 @@ class Scrapy {
     const browser = await puppeteer.launch({ headless: false })
     const page = await browser.newPage()
 
-    await this.getCategories(page)
+    await this.getCategories(page).catch(async () => {
+      await browser.close()
+    })
 
     await browser.close()
   }
@@ -28,7 +34,9 @@ class Scrapy {
   }
 
   private async getLinksChannels (page:puppeteer.Page, url: string):Promise<string[]> {
-    await page.goto(url)
+    await page.goto(url).catch(() => {
+      throw new Error('Erro ao acessar a url enviada')
+    })
 
     await page.$eval('body > div.whitebg > div > ul > li.divider.ad_group', element => {
       return element.remove()
@@ -47,7 +55,9 @@ class Scrapy {
   }
 
   private async getProgramsChannel (page:puppeteer.Page, linkChannel: string):Promise<void> {
-    await page.goto(linkChannel)
+    await page.goto(linkChannel).catch(() => {
+      throw new Error('Erro ao acessar a url enviada')
+    })
 
     let indexStartEnd = await this.getIndexStartEnd(page)
     indexStartEnd = indexStartEnd.filter(e => e !== null)
@@ -96,7 +106,7 @@ class Scrapy {
         index: 'channels',
         type: 'doc',
         body: {
-          channel: channel,
+          channel: channel.toUpperCase(),
           title: title,
           category: category,
           datetime: `${dateTomorrow}T${time}:00`

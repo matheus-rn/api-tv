@@ -3,6 +3,8 @@ import Queue from './app/lib/Queue'
 
 const url = process.env.API_SCRAPY
 const categories = process.env.CATEGORIES.split(',')
+const hourScrapy = process.env.HOUR_SCRAPY
+const minuteScrapy = process.env.MINUTE_SCRAPY
 
 Queue.process(async (job, jobDone) => {
   await ScrapyTv.handle(job.data.url)
@@ -10,11 +12,11 @@ Queue.process(async (job, jobDone) => {
 })
 
 Queue.add({ url: `${url}/${categories[0]}` }
-// , {
-//   repeat: {
-//     cron: '54 18 * * *'
-//   }
-// }
+  , {
+    repeat: {
+      cron: `${minuteScrapy} ${hourScrapy} * * *`
+    }
+  }
 )
 
 // Queue.add({ url: `${url}/${categories[1]}` }, {

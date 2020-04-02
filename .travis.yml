@@ -21,7 +21,14 @@ jobs:
       name: "Build"
       script:
         - yarn build
-        
+
+
+deploy:
+  provider: heroku
+  api_key: $API_KEY
+  app: api-tv
+  
+
 addons:
   apt:
     packages:

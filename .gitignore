@@ -2,3 +2,4 @@ node_modules
 export.sh
 yarn.lock
 *.txt
+dist

@@ -4,10 +4,13 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpileOnly src/server.ts",
+    "dev:server": "ts-node-dev --respawn --transpileOnly src/server.ts",
+    "dev:queue": "ts-node-dev --respawn --transpileOnly src/queue.ts",
+    "develop": "npm-run-all -l -p dev:*",
     "build": "tsc",
-    "apo": "node dist/server.js",
-    "scrap": "sucrase-node src/queue.ts"
+    "prod:server": "node dist/server.js",
+    "prod:queue": "node dist/queue.js",
+    "production": "npm-run-all -l -p prod:*"
   },
   "dependencies": {
     "@elastic/elasticsearch": "^7.6.0",
@@ -16,6 +19,7 @@
     "date-fns": "^2.9.0",
     "date-fns-tz": "^1.0.10",
     "express": "^4.17.1",
+    "npm-run-all": "^4.1.5",
     "puppeteer": "^2.1.1"
   },
   "devDependencies": {

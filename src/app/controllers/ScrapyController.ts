@@ -105,10 +105,10 @@ class Scrapy {
       const title = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.licontent > h2`, e => e.innerHTML)
       const category = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.licontent > h3`, e => e.innerHTML)
       const channel = await page.$eval('#canal_header > div > h1', e => e.innerHTML)
-
+      console.log(channel)
       await esClient.index({
         index: 'channels',
-        type: 'doc',
+        type: '_doc',
         body: {
           channel: channel.toUpperCase(),
           title: title,

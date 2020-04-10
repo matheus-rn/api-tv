@@ -6,18 +6,19 @@ const categories = process.env.CATEGORIES.split(',')
 const hourScrapy = process.env.HOUR_SCRAPY
 const minuteScrapy = process.env.MINUTE_SCRAPY
 
-Queue.process(async (job, jobDone) => {
-  await ScrapyTv.handle(job.data.url)
-  jobDone()
-})
+console.log(`Horário: ${new Date()}`)
+// Queue.process(async (job, jobDone) => {
+//   await ScrapyTv.handle(job.data.url)
+//   jobDone()
+// })
 
-Queue.add({ url: `${url}/${categories[0]}` }
-  , {
-    repeat: {
-      cron: `${minuteScrapy} ${hourScrapy} * * *`
-    }
-  }
-)
+// Queue.add({ url: `${url}/${categories[0]}` }
+//   , {
+//     repeat: {
+//       cron: `${minuteScrapy} ${hourScrapy} * * *`
+//     }
+//   }
+// )
 
 // Queue.add({ url: `${url}/${categories[1]}` }, {
 //   repeat: {

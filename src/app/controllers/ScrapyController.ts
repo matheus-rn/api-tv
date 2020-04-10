@@ -37,9 +37,8 @@ class Scrapy {
   }
 
   private async getLinksChannels (page:puppeteer.Page, url: string):Promise<string[]> {
-    await page.goto(url).catch(() => {
-      throw new Error('Erro ao acessar a url enviada')
-    })
+    console.log(url)
+    await page.goto(url)
 
     await page.$eval('body > div.whitebg > div > ul > li.divider.ad_group', element => {
       return element.remove()

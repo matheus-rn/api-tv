@@ -17,7 +17,7 @@ class Scrapy {
   public async channels (): Promise<void> {
     console.log('chegou channel')
 
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
     const page = await browser.newPage()
 
     console.log('chegou categorias')

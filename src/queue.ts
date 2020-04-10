@@ -22,6 +22,7 @@ console.log(`Horário: ${new Date()}`)
 //   }
 // )
 async function a ():Promise<void> {
+  console.log('chegou controller')
   ScrapyController.setUrl(`${url}/${categories[0]}`)
   await ScrapyController.channels()
 }

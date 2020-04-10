@@ -40,6 +40,8 @@ class Scrapy {
     console.log(url)
     await page.goto(url)
 
+    await page.waitForSelector('body > div.whitebg > div > ul > li.divider.ad_group')
+
     await page.$eval('body > div.whitebg > div > ul > li.divider.ad_group', element => {
       return element.remove()
     })

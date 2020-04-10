@@ -17,19 +17,18 @@ class Scrapy {
   public async channels (): Promise<void> {
     console.log('chegou channel')
 
-    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox'] })
+    const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
     const page = await browser.newPage()
 
     console.log('chegou categorias')
 
-    await this.getCategories(page).catch(async () => {
-      await browser.close()
-    })
+    await this.getCategories(page)
 
     await browser.close()
   }
 
   private async getCategories (page: puppeteer.Page): Promise<void> {
+    console.log('getCategories0')
     const linkChannel = await this.getLinksChannels(page, this.url)
     console.log('getCategories')
     for (let i = 0; i < linkChannel.length; i++) {

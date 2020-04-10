@@ -1,7 +1,6 @@
 import { Request, Response } from 'express'
 import esClient from '../../config/elasticsearch'
 import { zonedTimeToUtc } from 'date-fns-tz'
-import { subHours } from 'date-fns'
 
 class TvFullController {
   public async searchCurrentPrograms (req: Request, res: Response): Promise<Response> {

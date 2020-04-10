@@ -31,7 +31,7 @@ class Scrapy {
 
   private async getCategories (page: puppeteer.Page): Promise<void> {
     const linkChannel = await this.getLinksChannels(page, this.url)
-
+    console.log('getCategories')
     for (let i = 0; i < linkChannel.length; i++) {
       await this.getProgramsChannel(page, `https://meuguia.tv${linkChannel[i]}`)
     }
@@ -54,7 +54,7 @@ class Scrapy {
     })
 
     linksChannels = linksChannels.filter(link => link !== null)
-
+    console.log('getlinkschannels')
     return linksChannels
   }
 
@@ -65,7 +65,7 @@ class Scrapy {
 
     let indexStartEnd = await this.getIndexStartEnd(page)
     indexStartEnd = indexStartEnd.filter(e => e !== null)
-
+    console.log('getProhrams')
     await this.getPrograms(indexStartEnd, page)
   }
 
@@ -94,6 +94,8 @@ class Scrapy {
       })
       return arrayIndexs
     }, 'ul > li', dateTomorrow, dateAfterTomorrow)
+
+    console.log('getindex')
     return indexStartEnd
   }
 

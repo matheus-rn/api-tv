@@ -110,7 +110,7 @@ class Scrapy {
       console.log(channel)
       await esClient.index({
         index: 'channels',
-        type: '_doc',
+        type: 'doc',
         body: {
           channel: channel.toUpperCase(),
           title: title,

@@ -15,12 +15,8 @@ class Scrapy {
   }
 
   public async channels (): Promise<void> {
-    console.log('chegou channel')
-
     const browser = await puppeteer.launch({ headless: true, args: ['--no-sandbox', '--disable-setuid-sandbox'] })
     const page = await browser.newPage()
-
-    console.log('chegou categorias')
 
     await this.getCategories(page)
 
@@ -28,16 +24,14 @@ class Scrapy {
   }
 
   private async getCategories (page: puppeteer.Page): Promise<void> {
-    console.log('getCategories0')
     const linkChannel = await this.getLinksChannels(page, this.url)
-    console.log('getCategories')
+
     for (let i = 0; i < linkChannel.length; i++) {
       await this.getProgramsChannel(page, `https://meuguia.tv${linkChannel[i]}`)
     }
   }
 
   private async getLinksChannels (page:puppeteer.Page, url: string):Promise<string[]> {
-    console.log(url)
     await page.goto(url)
 
     await page.waitForSelector('body > div.whitebg > div > ul > li.divider.ad_group')
@@ -54,7 +48,7 @@ class Scrapy {
     })
 
     linksChannels = linksChannels.filter(link => link !== null)
-    console.log('getlinkschannels')
+
     return linksChannels
   }
 
@@ -65,7 +59,7 @@ class Scrapy {
 
     let indexStartEnd = await this.getIndexStartEnd(page)
     indexStartEnd = indexStartEnd.filter(e => e !== null)
-    console.log('getProhrams')
+
     await this.getPrograms(indexStartEnd, page)
   }
 
@@ -95,7 +89,6 @@ class Scrapy {
       return arrayIndexs
     }, 'ul > li', dateTomorrow, dateAfterTomorrow)
 
-    console.log('getindex')
     return indexStartEnd
   }
 
@@ -107,7 +100,6 @@ class Scrapy {
       const title = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.licontent > h2`, e => e.innerHTML)
       const category = await page.$eval(`body > div.whitebg > div > ul > li:nth-child(${i}) > a > div.licontent > h3`, e => e.innerHTML)
       const channel = await page.$eval('#canal_header > div > h1', e => e.innerHTML)
-      console.log(channel)
       await esClient.index({
         index: 'channels',
         type: 'doc',

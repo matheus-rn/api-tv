@@ -9,23 +9,26 @@ import esClient from './config/elasticsearch'
 
 const url = process.env.API_SCRAPY
 const categories = process.env.CATEGORIES.split(',')
+
 const hourScrapy = process.env.HOUR_SCRAPY
 const minuteScrapy = process.env.MINUTE_SCRAPY
+const hourDatabase = process.env.HOUR_DATABASE
+const minuteDatabase = process.env.MINUTE_DATABASE
 
 console.log(`Horário: ${new Date()}`)
 
-DatabaseQueue.process(async (job, jobDone) => {
-  await DatabaseElastic.handle(job.data.index)
-  jobDone()
-})
+// DatabaseQueue.process(async (job, jobDone) => {
+//   await DatabaseElastic.handle(job.data.index)
+//   jobDone()
+// })
 
-DatabaseQueue.add({ index: 'channels' }
-  , {
-    repeat: {
-      cron: '28 12 * * *'
-    }
-  }
-)
+// DatabaseQueue.add({ index: 'channels' }
+//   , {
+//     repeat: {
+//       cron: `${minuteDatabase} ${hourDatabase} * * *`
+//     }
+//   }
+// )
 
 // Queue.process(async (job, jobDone) => {
 //   await ScrapyTv.handle(job.data.url)
@@ -39,14 +42,6 @@ DatabaseQueue.add({ index: 'channels' }
 //     }
 //   }
 // )
-
-// async function a ():Promise<void> {
-//   console.log('chegou controller')
-//   ScrapyController.setUrl(`${url}/${categories[0]}`)
-//   await ScrapyController.channels()
-// }
-
-// a()
 
 // Queue.add({ url: `${url}/${categories[1]}` }, {
 //   repeat: {

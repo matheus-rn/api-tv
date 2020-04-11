@@ -13,16 +13,5 @@ export default {
         }
       }
     })
-    console.log('segundo')
-    await esClient.deleteByQuery({
-      index: index,
-      type: 'doc',
-      body: {
-        query: {
-          // eslint-disable-next-line @typescript-eslint/camelcase
-          match_all: {}
-        }
-      }
-    })
   }
 }

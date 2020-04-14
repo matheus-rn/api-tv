@@ -35,7 +35,7 @@ class TvFullController {
       currentProgram: documents[indexProgram - 1],
       nextProgram: documents[indexProgram]
     }
-    console.log(programs)
+
     return res.json(programs)
   }
 }
